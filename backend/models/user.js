@@ -26,5 +26,5 @@ const userSchema=new mongoose.Schema({
     
 });
 
-const User=mongoose.model('User',userSchemaSchema);//Toutes les boîtes = "User"  userSchema=Plan à suivre
+const User=mongoose.model('User',userSchema);//Toutes les boîtes = "User"  userSchema=Plan à suivre
 export default User;
