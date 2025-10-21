@@ -19,7 +19,7 @@ router.post('/register', async (req, res) => {//async:déclare une fonction qui 
     user = await User.findOne({ alias });
     if (user) return res.status(400).json({ error: 'Alias déjà utilisé' });
 
-    const hashedPassword = await bcrypt.hash(password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10); //crypte le password 
     user = new User({ name, alias, email, password: hashedPassword });//crée un NOUVEAU utilisateur avec ses 4 infos, en remplaçant le mot de passe par sa version cryptée
     await user.save();
 
