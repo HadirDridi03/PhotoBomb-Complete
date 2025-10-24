@@ -5,11 +5,6 @@ const userSchema=new mongoose.Schema({
         type:String,
         required:true
     },
-    alias:{
-        type:String,
-        required:true,
-        unique:true
-    },
     email:{
         type:String,
         required:true,
@@ -18,6 +13,11 @@ const userSchema=new mongoose.Schema({
     password:{
         type:String,
         required:true
+    },
+ role: {
+        type: String,
+        enum: ['user', 'admin'],
+        default: 'user' // Par défaut, un nouvel utilisateur est 'user'
     }},
     {
         timestamps:true/*Elle ajoute deux champs dans ta base :
