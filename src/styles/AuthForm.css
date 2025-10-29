@@ -1,0 +1,102 @@
+.auth-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(90deg, rgba(20, 129, 255, 1), rgba(127, 182, 255, 0.94) 100%);
+  font-family: "Poppins", sans-serif;
+}
+
+.auth-box {
+  background-color: rgb(240, 240, 252,0.83);
+  border-radius: 20px;
+  padding: 40px 50px;
+  box-shadow: 0px 8px 25px rgba(0, 0, 0, 0.567);
+  text-align: center;
+  width: 380px;
+}
+
+.auth-box h1 {
+  font-size: 22px;
+  margin-bottom: 10px;
+  color: rgba(40, 89, 197, 1);
+}
+.header-logo {
+  display: flex;
+  align-items: center;      
+  justify-content: center;  
+  gap: 10px;                
+  margin-bottom: 20px;     
+}
+
+.logo-agenda {
+  width: 35px; 
+  height: auto;
+}
+
+.auth-box h2 {
+  font-size: 28px;
+  color: rgba(0, 0, 0, 1);
+  margin-bottom: 30px;
+  
+}
+
+.resaccess-link {
+  text-decoration: none; /* enlève le soulignement */
+  color: inherit;        /* conserve la couleur du texte */
+}
+
+.signup-image {
+  width: 140px;
+  margin: 0px 0px 20px 20px;
+  display: block;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.auth-form input {
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  font-size: 1rem;
+  outline: none;
+  transition: border-color 0.3s ease;
+}
+
+.auth-form input:focus {
+  border-color: rgba(0, 133, 249, 1);
+}
+
+.auth-button {
+  background: linear-gradient(90deg, rgba(20, 129, 255, 1), rgba(127, 182, 255, 0.94) 100%);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 10px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s, opacity 0.2s;
+}
+
+.auth-button:hover {
+  transform: scale(1.03);
+  opacity: 0.9;
+}
+
+.auth-switch {
+  margin-top: 15px;
+  font-size: 0.9rem;
+}
+
+.auth-switch a {
+  color: rgba(0, 133, 249, 1);
+  text-decoration: none;
+}
+
+.auth-switch a:hover {
+  text-decoration: underline;
+}
