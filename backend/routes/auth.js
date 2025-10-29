@@ -1,35 +1,57 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
-import User from '../models/user.js';
+import User from '../models/User.js';
+import generateToken from '../utils/generateToken.js';
 
-const router = express.Router();//crée un mini-serveur pour organiser tes routes dans un fichier séparé.
-router.post('/register', async (req, res) => {//async:déclare une fonction qui peut attendre des opérations lentes comme la base de données.
-   //'/register':le serveur qui récupère les données du formulaire(boite aux lettres)
-    try {
-    const { name, email, password, confirmPassword, role = 'user'  } = req.body;//extrait les 5 champs du formulaire directement dans des variables.
-    if (password !== confirmPassword) {
-      return res.status(400).json({ error: 'Mots de passe ne correspondent pas' });//.json:transforme ton objet en format JSON structuré avec les bons headers pour que le client le lise facilement.
-    }
-    if (password.length < 8 || !/(?=.*[A-Z])(?=.*[0-9])/.test(password)) {
-      return res.status(400).json({ error: 'Mot de passe doit avoir 8+ caractères, 1 majuscule et 1 chiffre' });
-    }
+const router = express.Router();
 
-    let user = await User.findOne({ email });//findOne():cherche et retourne le premier document correspondant dans la base de données
-    if (user) return res.status(400).json({ error: 'Email déjà utilisé' });
-    if (role !== 'user' && role !== 'admin') {
-      return res.status(400).json({ error: 'Rôle invalide' });
+// Inscription d'un utilisateur
+router.post('/register', async (req, res) => {
+  const { name, email, password } = req.body;
+
+  try {
+    const userExists = await User.findOne({ email });
+    if (userExists) {
+      return res.status(400).json({ message: 'User already exists' });
     }
 
+    const hashedPassword = await bcrypt.hash(password, 10);
 
-    const hashedPassword = await bcrypt.hash(password, 10); //crypte le password 
-    user = new User({ name, email, password: hashedPassword ,role});//crée un NOUVEAU utilisateur avec ses 4 infos, en remplaçant le mot de passe par sa version cryptée
-    await user.save();
+    const user = await User.create({
+      name,
+      email,
+      password: hashedPassword,
+    });
 
-    res.status(201).json({ message: 'Compte créé avec succès !', 
-      userId: user._id,
-      role: user.role  });
+    res.status(201).json({
+      _id: user._id,
+      name: user.name,
+      email: user.email,
+      token: generateToken(user._id),
+    });
   } catch (error) {
-    res.status(500).json({ error: 'Erreur serveur' });
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Connexion d'un utilisateur
+router.post('/login', async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const user = await User.findOne({ email });
+    if (user && (await bcrypt.compare(password, user.password))) {
+      res.json({
+        _id: user._id,
+        name: user.name,
+        email: user.email,
+        token: generateToken(user._id),
+      });
+    } else {
+      res.status(401).json({ message: 'Invalid email or password' });
+    }
+  } catch (error) {
+    res.status(500).json({ message: error.message });
   }
 });
 
