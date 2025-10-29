@@ -19,7 +19,7 @@
   text-align: center;
   display: flex;
   flex-direction: column;
-  justify-content: flex-start;
+  justify-content: space-between;
   gap: 18px;
   color: white;
   position: relative;
@@ -90,9 +90,113 @@
 .footer {
   font-size: 0.8rem;
   color: rgba(255, 255, 255, 0.85);
-  position: absolute; /* ✅ position absolue */
-  bottom: 15px;       /* ✅ espace régulier depuis le bas */
-  left: 50%;
-  transform: translateX(-50%); /* ✅ centré horizontalement */
-  z-index: 1;
+  margin-top: 20px;
+  
+}
+
+/* === Responsive Design Amélioré === */
+
+/* Tablettes (jusqu’à 1024px) */
+@media (max-width: 1024px) {
+  .home-box {
+    width: 380px;
+    height: auto;
+    padding: 40px 30px;
+  }
+
+  .home-box h1 {
+    font-size: 1.5rem;
+  }
+
+  .home-box p {
+    font-size: 1.1rem;
+  }
+
+  .home-buttons button {
+    font-size: 0.95rem;
+    padding: 12px 24px;
+  }
+}
+
+/* Mobiles (jusqu’à 768px) */
+@media (max-width: 768px) {
+  .home-container {
+    height: auto;
+    min-height: 100vh;
+    padding: 40px 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .home-box {
+    width: 100%;
+    max-width: 360px;
+    height: auto; /* ✅ enlève la hauteur fixe */
+    padding: 30px 20px;
+    border-radius: 16px;
+    background-position: center;
+    background-size: cover;
+    box-shadow: 0px 4px 15px rgba(0, 0, 0, 0.25);
+    justify-content: space-between; /* ✅ garde l'espacement */
+    min-height: unset; /* ✅ adaptatif */
+  }
+
+  .home-box h1 {
+    font-size: 1rem;
+
+  }
+
+  .home-box p {
+    font-size: 0.95rem;
+    margin-top: 5px;
+  }
+
+  .home-buttons {
+    flex-direction: column;
+    width: 100%;
+    gap: 10px;
+    margin-top: 20px;
+  }
+
+  .home-buttons button {
+    width: 100%;
+    font-size: 0.9rem;
+    padding: 10px;
+  }
+
+  .footer {
+    margin-top: 25px;
+    font-size: 0.75rem;
+  }
+}
+
+/* Petits téléphones (jusqu’à 480px) */
+@media (max-width: 480px) {
+  .home-container {
+    padding: 20px 10px;
+  }
+
+  .home-box {
+    max-width: 320px;
+    padding: 25px 18px;
+    border-radius: 12px;
+  }
+
+  .home-box h1 {
+    font-size: 1.1rem;
+  }
+
+  .home-box p {
+    font-size: 0.9rem;
+  }
+
+  .home-buttons button {
+    font-size: 0.85rem;
+    padding: 9px;
+  }
+
+  .footer {
+    font-size: 0.7rem;
+  }
 }
