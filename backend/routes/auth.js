@@ -28,8 +28,8 @@ router.post('/register', async (req, res) => {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    // Créer un alias unique à partir de l'email
-    const alias = email.split('@')[0] + Math.random().toString(36).substring(2, 5);
+    // ✅ ALIAS RENFORCÉ - Plus unique et robuste
+    const alias = `${email.split('@')[0]}_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
 
     const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -49,6 +49,12 @@ router.post('/register', async (req, res) => {
     });
   } catch (error) {
     console.error('Registration error:', error);
+    
+    // ✅ MEILLEURE GESTION D'ERREUR
+    if (error.code === 11000) {
+      return res.status(400).json({ message: 'Duplicate key error - alias already exists' });
+    }
+    
     res.status(500).json({ message: error.message });
   }
 });
