@@ -14,18 +14,23 @@ app.use("/api/auth", authRoutes);
 
 const PORT = 5000;
 
-// Fonction pour supprimer l'index problématique
-const removeProblematicIndex = async () => {
+// Fonction pour résoudre le problème d'index
+const fixIndexIssue = async () => {
   try {
     await mongoose.connection.collection('users').dropIndex('alias_1');
     console.log('✅ Index alias supprimé');
   } catch (error) {
-    console.log('ℹ️ Index alias déjà supprimé ou inexistant');
+    console.log('ℹ️ Réparation des documents...');
+    const result = await mongoose.connection.collection('users').updateMany(
+      { alias: null },
+      { $set: { alias: "" } }
+    );
+    console.log(`✅ ${result.modifiedCount} documents réparés`);
   }
 };
 
 app.listen(PORT, async () => {
     await connectDB();
-    await removeProblematicIndex(); 
+    await fixIndexIssue();
     console.log(`server started at http://localhost:${PORT}`);
 });
