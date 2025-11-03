@@ -5,79 +5,79 @@ import generateToken from '../utils/generateToken.js';
 
 const router = express.Router();
 
-// 🔹 Inscription d'un utilisateur
+// Inscription d'un utilisateur
 router.post('/register', async (req, res) => {
   const { name, email, password, confirmPassword } = req.body;
 
   try {
-    // Vérification des champs obligatoires
-    if (!name || !email || !password || !confirmPassword) {
+    // Validation des données
+    if (!name || !email || !password) {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
-    // Vérification de la correspondance des mots de passe
     if (password !== confirmPassword) {
       return res.status(400).json({ message: 'Passwords do not match' });
     }
 
-    // Vérification de la complexité du mot de passe
     if (password.length < 8 || !/(?=.*[A-Z])(?=.*[0-9])/.test(password)) {
-      return res.status(400).json({
-        message: 'Password must have at least 8 characters, one uppercase letter and one number',
-      });
+      return res.status(400).json({ message: 'Password must have 8+ characters, 1 uppercase and 1 number' });
     }
 
-    // Vérifie si l'utilisateur existe déjà
     const userExists = await User.findOne({ email });
     if (userExists) {
       return res.status(400).json({ message: 'User already exists' });
     }
 
-    // Hachage du mot de passe
+    // ✅ ALIAS RENFORCÉ - Plus unique et robuste
+    const alias = `${email.split('@')[0]}_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
+
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Création du nouvel utilisateur
     const user = await User.create({
       name,
       email,
+      alias, // ✅ AJOUT DE L'ALIAS
       password: hashedPassword,
     });
 
-    // Réponse au frontend
     res.status(201).json({
       _id: user._id,
       name: user.name,
       email: user.email,
-      role: user.role,
+      alias: user.alias,
       token: generateToken(user._id),
     });
   } catch (error) {
     console.error('Registration error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    
+    // ✅ MEILLEURE GESTION D'ERREUR
+    if (error.code === 11000) {
+      return res.status(400).json({ message: 'Duplicate key error - alias already exists' });
+    }
+    
+    res.status(500).json({ message: error.message });
   }
 });
 
-// 🔹 Connexion d'un utilisateur
+// Connexion d'un utilisateur
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
     const user = await User.findOne({ email });
-
     if (user && (await bcrypt.compare(password, user.password))) {
       res.json({
         _id: user._id,
         name: user.name,
         email: user.email,
-        role: user.role,
+        alias: user.alias,
         token: generateToken(user._id),
       });
     } else {
       res.status(401).json({ message: 'Invalid email or password' });
     }
   } catch (error) {
-    console.error('Login error:', error);
-    res.status(500).json({ message: 'Server error', error: error.message });
+    res.status(500).json({ message: error.message });
   }
 });
 
