@@ -11,7 +11,9 @@ app.use(express.json());
 app.use(cors());  
 app.use("/api/auth", authRoutes);
 
-app.listen(5000, () => {
+const PORT = 3001;
+
+app.listen(PORT, () => {
     connectDB();
-    console.log("server started at http://localhost:5000");
+    console.log(`server started at http://localhost:${PORT}`);
 });
