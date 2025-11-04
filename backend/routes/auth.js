@@ -5,38 +5,36 @@ import generateToken from '../utils/generateToken.js';
 
 const router = express.Router();
 
-// Inscription d'un utilisateur
+// 🟢 INSCRIPTION
 router.post('/register', async (req, res) => {
   const { name, email, password, confirmPassword } = req.body;
 
   try {
-    // Validation des données
-    if (!name || !email || !password) {
-      return res.status(400).json({ message: 'All fields are required' });
+    // Vérification de base
+    if (!name || !email || !password || !confirmPassword) {
+      return res.status(400).json({ message: 'Tous les champs sont requis' });
     }
 
     if (password !== confirmPassword) {
-      return res.status(400).json({ message: 'Passwords do not match' });
+      return res.status(400).json({ message: 'Les mots de passe ne correspondent pas' });
     }
 
     if (password.length < 8 || !/(?=.*[A-Z])(?=.*[0-9])/.test(password)) {
-      return res.status(400).json({ message: 'Password must have 8+ characters, 1 uppercase and 1 number' });
+      return res.status(400).json({ message: 'Le mot de passe doit contenir au moins 8 caractères, une majuscule et un chiffre' });
     }
 
     const userExists = await User.findOne({ email });
     if (userExists) {
-      return res.status(400).json({ message: 'User already exists' });
+      return res.status(400).json({ message: 'Cet utilisateur existe déjà' });
     }
 
-    // ✅ ALIAS RENFORCÉ - Plus unique et robuste
     const alias = `${email.split('@')[0]}_${Date.now()}_${Math.random().toString(36).substring(2, 8)}`;
-
     const hashedPassword = await bcrypt.hash(password, 10);
 
     const user = await User.create({
       name,
       email,
-      alias, // ✅ AJOUT DE L'ALIAS
+      alias,
       password: hashedPassword,
     });
 
@@ -49,21 +47,19 @@ router.post('/register', async (req, res) => {
     });
   } catch (error) {
     console.error('Registration error:', error);
-    
-    // ✅ MEILLEURE GESTION D'ERREUR
-    if (error.code === 11000) {
-      return res.status(400).json({ message: 'Duplicate key error - alias already exists' });
-    }
-    
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Erreur serveur' });
   }
 });
 
-// Connexion d'un utilisateur
+// 🟣 CONNEXION
 router.post('/login', async (req, res) => {
   const { email, password } = req.body;
 
   try {
+    if (!email || !password) {
+      return res.status(400).json({ message: 'Tous les champs sont requis' });
+    }
+
     const user = await User.findOne({ email });
     if (user && (await bcrypt.compare(password, user.password))) {
       res.json({
@@ -74,11 +70,12 @@ router.post('/login', async (req, res) => {
         token: generateToken(user._id),
       });
     } else {
-      res.status(401).json({ message: 'Invalid email or password' });
+      res.status(401).json({ message: 'Email ou mot de passe invalide' });
     }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    res.status(500).json({ message: 'Erreur serveur' });
   }
 });
 
 export default router;
+t router;
